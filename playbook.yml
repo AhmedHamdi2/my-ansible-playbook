@@ -1,0 +1,28 @@
+---
+- name: Update nginx, copy index.html, and restart nginx
+  hosts: all 
+  become: true
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes 
+
+    - name: Install the latest version of nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: latest  
+
+    - name: Copy index.html from controller to host
+      ansible.builtin.copy:
+        src: index.html  
+        dest: /var/www/html/index.html  
+        owner: www-data
+        group: www-data 
+        mode: '0644'
+
+    - name: restart nginx
+      service: 
+        name: nginx
+        state: restarted
+        enabled: yes
+        use: service
